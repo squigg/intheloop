@@ -3,8 +3,8 @@
   "description": "Blue Bank API with expanded capability for posting receipts and transaction meta data.",
   "main": "index.js",
   "scripts": {
-	"prestart": "npm install",
-	"start": "node index.js"
+    "prestart": "npm install",
+    "start": "node index.js"
   },
   "keywords": [
     "swagger"
@@ -14,6 +14,7 @@
   "dependencies": {
     "connect": "^3.2.0",
     "js-yaml": "^3.3.0",
+    "mongodb": "^2.2.11",
     "swagger-tools": "0.10.1"
   }
 }

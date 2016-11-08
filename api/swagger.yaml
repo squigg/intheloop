@@ -6,7 +6,7 @@ info:
   version: "1.0"
   title: "Blue Bank Plus"
 host: "localhost:8080"
-basePath: "/"
+basePath: "/api"
 schemes:
 - "http"
 paths:

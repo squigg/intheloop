@@ -1,54 +1,14 @@
 'use strict';
-
-exports.createAccountPayment = function(args, res, next) {
-  /**
-   * parameters expected in the args:
-  * id (String)
-  * subscriptionKey (String)
-  * ocpApimSubscriptionKey (String)
-  * paymentRequest (PaymentRequest)
-  **/
-    var examples = {};
-  examples['application/json'] = {
-  "OTPCode" : "aeiou",
-  "paymentAmount" : 1.3579000000000001069366817318950779736042022705078125,
-  "toSortCode" : "aeiou",
-  "paymentId" : "aeiou",
-  "paymentReference" : "aeiou",
-  "toAccountNumber" : "aeiou",
-  "paymentStatus" : "aeiou",
-  "callbackUri" : "aeiou"
-};
-  if(Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  }
-  else {
-    res.end();
-  }
-
-}
+require ('../services/mongo');
 
 exports.createTransactionMeta = function(args, res, next) {
-  /**
-   * parameters expected in the args:
-  * id (String)
-  * ocpApimSubscriptionKey (String)
-  * meta (TransactionMeta)
-  **/
-    var examples = {};
-  examples['application/json'] = {
-  "tags" : [ "aeiou" ],
-  "comment" : "aeiou"
-};
-  if(Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  }
-  else {
-    res.end();
-  }
 
+    res.setHeader('Content-Type', 'application/json');
+    withMongo((db) => {
+        db.collection('transactionMeta').insertOne(args.meta, function (err, r) {
+            res.end(JSON.stringify(r || {}, null, 2));
+        });
+    });
 }
 
 exports.createTransactionReceipt = function(args, res, next) {
@@ -83,87 +43,6 @@ exports.createTransactionReceipt = function(args, res, next) {
 
 }
 
-exports.getAccount = function(args, res, next) {
-  /**
-   * parameters expect
-ed in the args:
-  * id (String)
-  * subscriptionKey (String)
-  * ocpApimSubscriptionKey (String)
-  **/
-    var examples = {};
-  examples['application/json'] = {
-  "id" : "aeiou",
-  "accountNumber" : "aeiou",
-  "accountBalance" : 1.3579000000000001069366817318950779736042022705078125,
-  "accountCurrency" : "aeiou",
-  "accountType" : "aeiou",
-  "sortCode" : "aeiou",
-  "accountFriendlyName" : "aeiou"
-};
-  if(Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  }
-  else {
-    res.end();
-  }
-
-}
-
-exports.getAccountPayment = function(args, res, next) {
-  /**
-   * parameters expected in the args:
-  * paymentId (String)
-  * id (String)
-  * subscriptionKey (String)
-  * ocpApimSubscriptionKey (String)
-  **/
-    var examples = {};
-  examples['application/json'] = {
-  "OTPCode" : "aeiou",
-  "paymentAmount" : 1.3579000000000001069366817318950779736042022705078125,
-  "toSortCode" : "aeiou",
-  "paymentId" : "aeiou",
-  "paymentReference" : "aeiou",
-  "toAccountNumber" : "aeiou",
-  "paymentStatus" : "aeiou",
-  "callbackUri" : "aeiou"
-};
-  if(Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  }
-  else {
-    res.end();
-  }
-
-}
-
-exports.getAccountPayments = function(args, res, next) {
-  /**
-   * parameters expected in the args:
-  * id (String)
-  * limit (String)
-  * offset (String)
-  * sortOrder (String)
-  * fields (String)
-  * filter (String)
-  * subscriptionKey (String)
-  * ocpApimSubscriptionKey (String)
-  **/
-    var examples = {};
-  examples['application/json'] = "";
-  if(Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  }
-  else {
-    res.end();
-  }
-
-}
-
 exports.getAccountTransactions = function(args, res, next) {
   /**
    * parameters expected in the args:
@@ -188,89 +67,14 @@ exports.getAccountTransactions = function(args, res, next) {
 
 }
 
-exports.getCustomer = function(args, res, next) {
-  /**
-   * parameters expected in the args:
-  * id (String)
-  * subscriptionKey (String)
-  * ocpApimSubscriptionKey (String)
-  **/
-    var examples = {};
-  examples['application/json'] = {
-  "id" : "aeiou",
-  "mobilePhone" : "aeiou",
-  "county" : "aeiou",
-  "postCode" : "aeiou",
-  "familyName" : "aeiou",
-  "address1" : "aeiou",
-  "address2" : "aeiou",
-  "town" : "aeiou",
-  "givenName" : "aeiou"
-};
-  if(Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  }
-  else {
-    res.end();
-  }
-
-}
-
-exports.getCustomerAccounts = function(args, res, next) {
-  /**
-   * parameters expected in the args:
-  * id (String)
-  * subscriptionKey (String)
-  * ocpApimSubscriptionKey (String)
-  **/
-    var examples = {};
-  examples['application/json'] = "";
-  if(Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  }
-  else {
-    res.end();
-  }
-
-}
-
-exports.getCustomers = function(args, res, next) {
-  /**
-   * parameters expected in the args:
-  * subscriptionKey (String)
-  * ocpApimSubscriptionKey (String)
-  **/
-    var examples = {};
-  examples['application/json'] = "";
-  if(Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  }
-  else {
-    res.end();
-  }
-
-}
-
 exports.getTransactionMeta = function(args, res, next) {
-  /**
-   * parameters expected in the args:
-  * id (String)
-  **/
-    var examples = {};
-  examples['application/json'] = {
-  "tags" : [ "aeiou" ],
-  "comment" : "aeiou"
-};
-  if(Object.keys(examples).length > 0) {
+
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  }
-  else {
-    res.end();
-  }
+    withMongo((db) => {
+        db.collection('transactionMeta').find({'transaction_id': args.id}).toArray(function (err, data) {
+            res.end(JSON.stringify(data || {}, null, 2));
+        });
+    });
 
 }
 
@@ -293,78 +97,6 @@ exports.getTransactionReceipt = function(args, res, next) {
     "item_url" : "aeiou"
   } ],
   "discount" : "aeiou"
-};
-  if(Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  }
-  else {
-    res.end();
-  }
-
-}
-
-exports.updateAccount = function(args, res, next) {
-  /**
-   * parameters expected in the args:
-  * id (String)
-  * subscriptionKey (String)
-  * ocpApimSubscriptionKey (String)
-  * body (Body)
-  **/
-  // no response value expected for this operation
-  res.end();
-}
-
-exports.updateAccountPayment = function(args, res, next) {
-  /**
-   * parameters expected in the args:
-  * id (String)
-  * paymentId (String)
-  * subscriptionKey (String)
-  * ocpApimSubscriptionKey (String)
-  * patchPayment (PatchPayment)
-  **/
-    var examples = {};
-  examples['application/json'] = {
-  "OTPCode" : "aeiou",
-  "paymentAmount" : 1.3579000000000001069366817318950779736042022705078125,
-  "toSortCode" : "aeiou",
-  "paymentId" : "aeiou",
-  "paymentReference" : "aeiou",
-  "toAccountNumber" : "aeiou",
-  "paymentStatus" : "aeiou",
-  "callbackUri" : "aeiou"
-};
-  if(Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  }
-  else {
-    res.end();
-  }
-
-}
-
-exports.updateCustomer = function(args, res, next) {
-  /**
-   * parameters expected in the args:
-  * id (String)
-  * subscriptionKey (String)
-  * ocpApimSubscriptionKey (String)
-  * body (Body)
-  **/
-    var examples = {};
-  examples['application/json'] = {
-  "id" : "aeiou",
-  "mobilePhone" : "aeiou",
-  "county" : "aeiou",
-  "postCode" : "aeiou",
-  "familyName" : "aeiou",
-  "address1" : "aeiou",
-  "address2" : "aeiou",
-  "town" : "aeiou",
-  "givenName" : "aeiou"
 };
   if(Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
