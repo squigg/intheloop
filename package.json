@@ -9,6 +9,10 @@
   "keywords": [
     "swagger"
   ],
+  "engines": {
+    "node": "5.9.1",
+    "npm": "3.7.3"
+  },
   "license": "Apache-2.0",
   "private": true,
   "dependencies": {
