@@ -1,0 +1,1066 @@
+---
+swagger: "2.0"
+info:
+  description: "Blue Bank API with expanded capability for posting receipts and transaction\
+    \ meta data."
+  version: "1.0"
+  title: "Blue Bank Plus"
+host: "localhost:8080"
+basePath: "/"
+schemes:
+- "http"
+paths:
+  /accounts/{id}:
+    get:
+      description: "<p>This returns a full Account object for the given id - this\
+        \ provides more fields than the Summary Account object provided by the <code>/customer/{id}/accounts</code>\
+        \ endpoint and also provides access to the <code>/accounts/{id}/transactions</code>\
+        \ and the <code>/accounts/{id}/payments</code> resources.</p><p><b><i>Note:</b>\
+        \ By design, and in a departure from common REST practice, there is no <code>/accounts</code>\
+        \ top-level endpoint in this API. This is because (in delegation scenarios)\
+        \ the collection of objects which would be returned would potentially include\
+        \ accounts belonging to more than one Customer.</p><p>If you want to enumerate\
+        \ all accounts for a Customer, you should first enumerate AccountSummary objects\
+        \ by calling <code>/customers/{id}/accounts</code> and then call this API\
+        \ for each id to return the full Account objects.</i></p><p>Required headers:\
+        \ <b>Ocp-Apim-Subssscription-Key</b> & <b>bearer</b></p>"
+      operationId: "getAccount"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The id to return"
+        required: true
+        type: "string"
+      - name: "subscriptionKey"
+        in: "query"
+        description: "subscription key in url"
+        required: false
+        type: "string"
+      - name: "Ocp-Apim-Subssscription-Key"
+        in: "header"
+        description: "subscription key in header"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Account"
+        400:
+          description: "Bad request - check that you have provided all required parameters"
+        401:
+          description: "Unauthorised - you are not authenticated"
+        403:
+          description: "Forbidden - you do not have access to this resource"
+        404:
+          description: "Not found - the resource does not exist"
+        500:
+          description: "Server error - problem at our end"
+      x-swagger-router-controller: "Default"
+    patch:
+      description: "By design, only the accountFriendlyName can be updated by API.\
+        \ Other fields are reserved by the Bank and any changes to them will be ignored.<p>Required\
+        \ headers: <b>Ocp-Apim-Subssscription-Key</b> & <b>bearer</b></p>"
+      operationId: "updateAccount"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The id to update"
+        required: true
+        type: "string"
+      - name: "subscriptionKey"
+        in: "query"
+        description: "subscription key in url"
+        required: false
+        type: "string"
+      - name: "Ocp-Apim-Subssscription-Key"
+        in: "header"
+        description: "subscription key in header"
+        required: false
+        type: "string"
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/Body"
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "Bad request - check that you have provided all required parameters"
+        401:
+          description: "Unauthorised - you are not authenticated"
+        403:
+          description: "Forbidden - you do not have access to this resource"
+        404:
+          description: "Not found - the resource does not exist"
+        500:
+          description: "Server error - problem at our end"
+      x-swagger-router-controller: "Default"
+  /accounts/{id}/payments:
+    get:
+      description: "<p>We maintain a collection of all currently 'in progress' payments\
+        \ plus 28 days of 'completed' payments.</p><h5>offset option</h5><p>The offset\
+        \ option is the zero-based index of the first record that you would like to\
+        \ receive. The default is 0.</p><h5>limit option</h5><p>The limit option is\
+        \ the maximum number of records that you would like to be returned. The default\
+        \ is 50.</p><h5>sortOrder option</h5><p>The sortOrder option is a comma-separated\
+        \ list of fields used to specify one or more levels of sorting of the returned\
+        \  collection. To specify a reverse-sort, add a '-' sign to the field name.</p><h5>fields\
+        \ option</h5><p>The fields option allows you to request a partial set of fields\
+        \ to be returned, rather than the entire obect. The fields option expects\
+        \ a comma-separated list of field names from the returned object schema.</p><h5>filter\
+        \ option</h5><p>The filter option may specify the following predicates:<ul><li>'gt'\
+        \ for 'greater than'</li><li>'lt' for 'less than'</li><li>'gte' for 'greater\
+        \ than or equal to'</li><li>'lte' for 'less than or equals to'</li><li>'eq'\
+        \ for equals</li><li>'ne' for 'not equals'</li></ul></p><p> Note that if multiple\
+        \ filter queries are specified then they are logically AND'ed together.</p><p>Required\
+        \ headers: <b>Ocp-Apim-Subssscription-Key</b> & <b>bearer</b></p>"
+      operationId: "getAccountPayments"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The id object from which fund will be debited"
+        required: true
+        type: "string"
+      - name: "limit"
+        in: "query"
+        description: "The number of records to return in this request"
+        required: false
+        type: "string"
+      - name: "offset"
+        in: "query"
+        description: "The index (in the overall result set) of the first record to\
+          \ return in this request"
+        required: false
+        type: "string"
+      - name: "sortOrder"
+        in: "query"
+        description: "The (comma-separated, list of) sort field(s) to apply to this\
+          \ result set. Prefix with '-' to reverse sort"
+        required: false
+        type: "string"
+      - name: "fields"
+        in: "query"
+        description: "The list of fields to return if a partial result is desired\
+          \ (default is to return all fields)"
+        required: false
+        type: "string"
+      - name: "filter"
+        in: "query"
+        description: "Filter the returned list of transactions for {id}, returning\
+          \ only those which match the filter string"
+        required: false
+        type: "string"
+      - name: "subscriptionKey"
+        in: "query"
+        description: "subscription key in url"
+        required: false
+        type: "string"
+      - name: "Ocp-Apim-Subssscription-Key"
+        in: "header"
+        description: "subscription key in header"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "The payment request was accepted for processing. The paymentId\
+            \ returned in the message body can be used to check the status of the\
+            \ payment."
+          schema:
+            $ref: "#/definitions/PaymentArray"
+        400:
+          description: "Bad request - check that you have provided all required parameters"
+        401:
+          description: "Unauthorised - you are not authenticated"
+        403:
+          description: "Forbidden - you do not have access to this resource"
+        404:
+          description: "Not found - the resource does not exist"
+        500:
+          description: "Server error - problem at our end"
+      x-swagger-router-controller: "Default"
+    post:
+      description: "<p>This method can be used to request a payment to be made from\
+        \ the  account specified in the 'id' path parameter (source account) to another\
+        \ bank account (target account) that is specified in the message body.<p>Note\
+        \ the relationship between payments and transactions - each account has a\
+        \ collection of payments and a collection of transactions. To make a payment,\
+        \ you make a post to the payments collection to create a new payment request\
+        \ object. This object can be checked to see the progress of the payment through\
+        \ its own lifecycle.</p><p>If (and only if) that payment is successful, you\
+        \ will see a corresponding debit entry in the transactions list to indicate\
+        \ that the payment has settled and the money has actually moved.</p><h6>Types\
+        \ of payment</h6><p>The following payment types are possible in this release:<ul><li><b>Transfers</b>\
+        \ - if the destination account is owned by the same person who owns the source\
+        \ account, then this is a transfer. You must specify the target account with\
+        \ a sortcode/account number pair. On completion of the payment, a debit transaction\
+        \ will appear in the source account and a credit transaction will appear in\
+        \ the destination account.</li><li><b>UK Faster Payments</b> - if the destination\
+        \ is to another valid account with sortcode 839999, then this will be done\
+        \ as a (simulated) UK Faster Payment between two parties. You must specify\
+        \ the target account with  a sortcode/account number pair. On completion of\
+        \ the payment, a debit transaction will appear in the source account and a\
+        \ credit transaction will appear in the destination account.<br/>If the destination\
+        \ is to any sortcode other than 839999, then we will simulate an outbound\
+        \ payment to another institution by adding a debit transaction to the source\
+        \ account and by creating a General Ledger entry for our simulated bank that\
+        \ records the outward flow of this money. </li></ul><p>Note that you do not\
+        \ have to do anything to specify the payment type in your request: we determine\
+        \ whether a payment is a transfer, an internal payment or a UK payment based\
+        \ upon the target account that you specify.</p><h6>Payment status</h6><p>There\
+        \ are two modes of operation provided which allow the status of a payment\
+        \ request to be checked:<ul><li><b>Push</b> - the caller provides a callback\
+        \ uri when making the payment and we call that uri with payment status update\
+        \ messages</li><li><b>Polling</b> - if a callback uri is not specified, then\
+        \ we provide a statusUri in the response body which can be periodically called\
+        \ by the client application to check on payment status.</li></ul></p><p>Note\
+        \ that in a future release, there will potentially be a separate transaction\
+        \ covering any fees resulting from the payment and this will include a linking\
+        \ mechanism to allow a tie between the charge and the payment transaction\
+        \ for which the charge is levied to be easily determined</p><h6>Two Factor\
+        \ Authentication (2FA)</h6><p>Incoming European regulations (Payment Services\
+        \ Directive 2) will mandate the implementation of two-factor authentication\
+        \ for payments above a certain ceiling and we have modelled this from v0.6.x\
+        \ of this API.</p><p>If you make a payment below the 2FA 'ceiling' of ï¿½\
+        30, then this is a single-stage process (provided that you have specified\
+        \ the payment object properly). Once you POST the payment object, it's paymentStatus\
+        \ will immediately be set to <code>'paymentStatus':'Pending'</code>. You will\
+        \ receive a 200 status code, which is your notification that the payment is\
+        \ queued for processing. Under most circumstances, the payment will be picked\
+        \ up by our Payments Engine for processing within a few seconds</p><p>If you\
+        \ make a payment above the 2FA 'ceiling', then this is a two-stage process.\
+        \ Your paymentStatus will be set to an initial state of <code>'paymentStatus':'2FA\
+        \ required'</code> and you will receive a 401 status code.<p>This is your\
+        \ signal to prompt the user of your app to enter the 6-digit One Time Password\
+        \ (OTP) that we will send to their registered mobile number - see the PATCH\
+        \ Customer documentation to set this value.</p><p>Once the user has provided\
+        \ the OTP code, you must PATCH the payment object. This is the second and\
+        \ final stage of the 2FA payment process. Patching the object with the correct\
+        \ OTP will set the <code>'paymentStatus':'Pending'</code> and will initiate\
+        \ processing by our Payments Engine.</p><p style=\"color:red;\"><b>NOTE: At\
+        \ our India Hackathons, the SMS message will not be generated and the bypass-code\
+        \ \"123456\" should be used to PATCH the request.</b></p><p>Required headers:\
+        \ <b>Ocp-Apim-Subssscription-Key</b> & <b>bearer</b></p>"
+      operationId: "createAccountPayment"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The id to make a payment from"
+        required: true
+        type: "string"
+      - name: "subscriptionKey"
+        in: "query"
+        description: "subscription key in url"
+        required: false
+        type: "string"
+      - name: "Ocp-Apim-Subssscription-Key"
+        in: "header"
+        description: "subscription key in header"
+        required: false
+        type: "string"
+      - in: "body"
+        name: "paymentRequest"
+        required: false
+        schema:
+          $ref: "#/definitions/PaymentRequest"
+      responses:
+        200:
+          description: "The payment request was accepted for processing. The paymentId\
+            \ returned in the message body can be used to check the status of the\
+            \ payment."
+          schema:
+            $ref: "#/definitions/Payment"
+        400:
+          description: "Bad request - check that you have provided all required parameters"
+        401:
+          description: "<b>General meaning</b> - Unauthorised - you are not authenticated<br/>If\
+            \ accompanied with a message body: <code>{'paymentStatus':'2FA required'}</code>,\
+            \ then this indicates that your payment requires 2FA and you should follow\
+            \ the above instructions relating to a payment above the 2FA ceiling"
+        403:
+          description: "Forbidden - you do not have access to this resource"
+        404:
+          description: "Not found - the resource does not exist"
+        500:
+          description: "Server error - problem at our end"
+      x-swagger-router-controller: "Default"
+  /accounts/{id}/payments/{paymentId}:
+    get:
+      description: "<p>In the case where the client does not provide a callbackUri\
+        \ for us to send push status updates you can instead directly query the paymentId\
+        \ to check the status of the payment.</p><p>Required headers: <b>Ocp-Apim-Subssscription-Key</b>\
+        \ & <b>bearer</b></p>"
+      operationId: "getAccountPayment"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "paymentId"
+        in: "path"
+        description: "the unique paymentId for the payment to be checked"
+        required: true
+        type: "string"
+      - name: "id"
+        in: "path"
+        description: "The id to make the payment from"
+        required: true
+        type: "string"
+      - name: "subscriptionKey"
+        in: "query"
+        description: "subscription key in url"
+        required: false
+        type: "string"
+      - name: "Ocp-Apim-Subssscription-Key"
+        in: "header"
+        description: "subscription key in header"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Payment"
+        400:
+          description: "Bad request - check that you have provided all required parameters"
+        401:
+          description: "Unauthorised - you are not authenticated"
+        403:
+          description: "Forbidden - you do not have access to this resource"
+        404:
+          description: "Not found - the resource does not exist"
+        500:
+          description: "Server error - problem at our end"
+      x-swagger-router-controller: "Default"
+    patch:
+      description: "<p>This method is used to provide the One Time Password (OTP)\
+        \ code which is required to authorise a payment greater than the 2FA ceiling\
+        \ of Â£30.</p><p>In order to authorise the payment, you must PATCH the OTPCode\
+        \ attribute of the Payment object by passing a body in this form:</p><p><code>{'OTPCode':'xxxxxx}</code></p><p\
+        \ style=\"color:red;\"><b>NOTE: At our India Hackathons, the SMS message will\
+        \ not be generated and the bypass-code \"123456\" should be used to PATCH\
+        \ the request.</b></p><p>Required headers: <b>Ocp-Apim-Subssscription-Key</b>\
+        \ & <b>bearer</b></p>"
+      operationId: "updateAccountPayment"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The account ID which the desired payment belongs to"
+        required: true
+        type: "string"
+      - name: "paymentId"
+        in: "path"
+        description: "The id of the Payment to be authorised"
+        required: true
+        type: "string"
+      - name: "subscriptionKey"
+        in: "query"
+        description: "subscription key in url"
+        required: false
+        type: "string"
+      - name: "Ocp-Apim-Subssscription-Key"
+        in: "header"
+        description: "subscription key in header"
+        required: false
+        type: "string"
+      - in: "body"
+        name: "patchPayment"
+        required: false
+        schema:
+          $ref: "#/definitions/PatchPayment"
+      responses:
+        200:
+          description: "The payment request was accepted for processing. The paymentId\
+            \ returned in the message body can be used to check the status of the\
+            \ payment."
+          schema:
+            $ref: "#/definitions/Payment"
+        400:
+          description: "Bad request - check that you have provided all required parameters"
+        401:
+          description: "Unauthorised - you are not authenticated"
+        403:
+          description: "Forbidden - you do not have access to this resource"
+        404:
+          description: "Not found - the resource does not exist"
+        500:
+          description: "Server error - problem at our end"
+      x-swagger-router-controller: "Default"
+  /accounts/{id}/transactions:
+    get:
+      description: "<p>Query string parameters can be used to sort by one or more\
+        \ fields, to paginate results, to request a partial set of fields to be returned\
+        \ and to filter the rows returned by using a filter string.</p><h5>offset\
+        \ option</h5><p>The offset option is the zero-based index of the first record\
+        \ that you would like to receive. The default is 0.</p><h5>limit option</h5><p>The\
+        \ limit option is the maximum number of records that you would like to be\
+        \ returned. The default is 50.</p><h5>sortOrder option</h5><p>The sortOrder\
+        \ option is a comma-separated list of fields used to specify one or more levels\
+        \ of sorting of the returned  collection. To specify a reverse-sort, add a\
+        \ '-' sign to the field name.</p><h5>fields option</h5><p>The fields option\
+        \ allows you to request a partial set of fields to be returned, rather than\
+        \ the entire obect. The fields option expects a comma-separated list of field\
+        \ names from the returned object schema.</p><h5>filter option</h5><p>The filter\
+        \ option may specify the following predicates:<ul><li>'gt' for 'greater than'</li><li>'lt'\
+        \ for 'less than'</li><li>'gte' for 'greater than or equal to'</li><li>'lte'\
+        \ for 'less than or equals to'</li><li>'eq' for equals</li><li>'ne' for 'not\
+        \ equals'</li></ul></p><p> Note that if multiple filter queries are specified\
+        \ then they are logically AND'ed together.</p><h6>Example 1</h6><p>To return\
+        \ all records for an account showing only the custom name and balance, sorted\
+        \ by the transaction date and time:</p><p><code>/accounts/{id}/transactions?fields=transactionDateTime,accountBalance&sortOrder=transactionDateTime</code></p><h6>Example\
+        \ 2</h6><p>To return the second page of 20 results for all records:</p><p><code>/accounts/{id}/transactions?offset=20&limit=20</code></p><h6>Example\
+        \ 3</h6><p>To return transactions greater than a particular value:</p><p><code>/accounts/{id}/transactions?filter=transactionAmount.gt.250</code></p><p><h6>Example\
+        \ 4</h6></p><p>To perform a complex filter query, for example, all transactions\
+        \ before Jan 31st 2015 that have a transaction amount greater than 50:</p><p><code>/accounts/{id}/transactions?filter=transactionAmount.gt.50,transactionDate.lt.2015.01.31</code></p><p>Required\
+        \ headers: <b>Ocp-Apim-Subssscription-Key</b> & <b>bearer</b></p>"
+      operationId: "getAccountTransactions"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The id to return transactions for"
+        required: true
+        type: "string"
+      - name: "offset"
+        in: "query"
+        description: "The index (in the overall result set) of the first record to\
+          \ return in this request"
+        required: false
+        type: "string"
+      - name: "limit"
+        in: "query"
+        description: "The number of records to return in this request"
+        required: false
+        type: "string"
+      - name: "sortOrder"
+        in: "query"
+        description: "The (comma-separated, list of) sort field(s) to apply to this\
+          \ result set. Prefix with '-' to reverse sort"
+        required: false
+        type: "string"
+      - name: "fields"
+        in: "query"
+        description: "The list of fields to return if a partial result is desired\
+          \ (default is to return all fields)"
+        required: false
+        type: "string"
+      - name: "filter"
+        in: "query"
+        description: "Filter the returned list of transactions for {id}, returning\
+          \ only those which match the filter string"
+        required: false
+        type: "string"
+      - name: "subscriptionKey"
+        in: "query"
+        description: "subscription key in url"
+        required: false
+        type: "string"
+      - name: "Ocp-Apim-Subssscription-Key"
+        in: "header"
+        description: "subscription key in header"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/TransactionArray"
+        400:
+          description: "Bad request - check that you have provided all required parameters"
+        401:
+          description: "Unauthorised - you are not authenticated"
+        403:
+          description: "Forbidden - you do not have access to this resource"
+        404:
+          description: "Not found - the resource does not exist"
+        500:
+          description: "Server error - problem at our end"
+      x-swagger-router-controller: "Default"
+  /customers:
+    get:
+      description: "<p>This call will return a collection of Customer objects which\
+        \ the currently authenticated user is allowed to see. At present, the collection\
+        \ will return a single Customer object, but more complex scenarios in the\
+        \ future (e.g. delegation scenarios) could result in multiple objects being\
+        \ returned in the collection.</p><p>Required headers: <b>Ocp-Apim-Subssscription-Key</b>\
+        \ & <b>bearer</b></p>"
+      operationId: "getCustomers"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "subscriptionKey"
+        in: "query"
+        description: "subscription key in url"
+        required: false
+        type: "string"
+      - name: "Ocp-Apim-Subssscription-Key"
+        in: "header"
+        description: "subscription key in header"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/CustomerArray"
+        401:
+          description: "Unauthorised - you are not authenticated"
+        500:
+          description: "Server error - problem at our end"
+      x-swagger-router-controller: "Default"
+  /customers/{id}:
+    get:
+      description: "Use this call to return a specific Customer object, if you know\
+        \ the id. For example, if you have stored a list of valid id's from a previous\
+        \ session, you can access Customer objects individually using this call.<p>Required\
+        \ headers: <b>Ocp-Apim-Subssscription-Key</b> & <b>bearer</b></p>"
+      operationId: "getCustomer"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "description"
+        required: true
+        type: "string"
+      - name: "subscriptionKey"
+        in: "query"
+        description: "subscription key in url"
+        required: false
+        type: "string"
+      - name: "Ocp-Apim-Subssscription-Key"
+        in: "header"
+        description: "subscription key in header"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Customer"
+        400:
+          description: "Bad request - check that you have provided all required parameters"
+        401:
+          description: "Unauthorised - you are not authenticated"
+        403:
+          description: "Forbidden - you do not have access to this resource"
+        404:
+          description: "Not found - the resource does not exist"
+        500:
+          description: "Server error - problem at our end"
+      x-swagger-router-controller: "Default"
+    patch:
+      description: "Use this call to update a specific Customer object, if you know\
+        \ the id. At present, the only property which it is possible to update is\
+        \ 'mobilePhone'.</p><p>This operation is enabled to allow Second Factor Authentication\
+        \ scenarios for Payments. In a future release, this feature will be available\
+        \ in a customer portal and this PATCH operation will be removed from the public\
+        \ API. <p>Required headers: <b>Ocp-Apim-Subssscription-Key</b> & <b>bearer</b></p>"
+      operationId: "updateCustomer"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "description"
+        required: true
+        type: "string"
+      - name: "subscriptionKey"
+        in: "query"
+        description: "subscription key in url"
+        required: false
+        type: "string"
+      - name: "Ocp-Apim-Subssscription-Key"
+        in: "header"
+        description: "subscription key in header"
+        required: false
+        type: "string"
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/Body"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Customer"
+        400:
+          description: "Bad request - check that you have provided all required parameters"
+        401:
+          description: "Unauthorised - you are not authenticated"
+        403:
+          description: "Forbidden - you do not have access to this resource"
+        404:
+          description: "Not found - the resource does not exist"
+        500:
+          description: "Server error - problem at our end"
+      x-swagger-router-controller: "Default"
+  /customers/{id}/accounts:
+    get:
+      description: "Use this call to enumerate the list of accounts for the specified\
+        \ user. An id is your key into the <code>/accounts</code> endpoint. <p>A collection\
+        \ of AccountSummary objects are returned. Full Account objects can be retrieved\
+        \ from the <code>/accounts/{id}</code> endpoint.</p><p>Required headers: <b>Ocp-Apim-Subssscription-Key</b>\
+        \ & <b>bearer</b></p>"
+      operationId: "getCustomerAccounts"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "description"
+        required: true
+        type: "string"
+      - name: "subscriptionKey"
+        in: "query"
+        description: "subscription key in url"
+        required: false
+        type: "string"
+      - name: "Ocp-Apim-Subssscription-Key"
+        in: "header"
+        description: "subscription key in header"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/AccountSummaryArray"
+        400:
+          description: "Bad request - check that you have provided all required parameters"
+        401:
+          description: "Unauthorised - you are not authenticated"
+        403:
+          description: "Forbidden - you do not have access to this resource"
+        404:
+          description: "Not found - the resource does not exist"
+        500:
+          description: "Server error - problem at our end"
+      x-swagger-router-controller: "Default"
+  /transactions/{id}/meta:
+    get:
+      description: "Get the meta data for a transaction"
+      operationId: "getTransactionMeta"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The id of the transaction to get the meta data for"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/TransactionMeta"
+        400:
+          description: "Bad request - check that you have provided all required parameters"
+        401:
+          description: "Unauthorised - you are not authenticated"
+        403:
+          description: "Forbidden - you do not have access to this resource"
+        404:
+          description: "Not found - the resource does not exist"
+        500:
+          description: "Server error - problem at our end"
+      x-swagger-router-controller: "Default"
+    post:
+      description: "Add meta data to a transaction"
+      operationId: "createTransactionMeta"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The transaction id to add the meta data to"
+        required: true
+        type: "string"
+      - name: "Ocp-Apim-Subssscription-Key"
+        in: "header"
+        description: "subscription key in header"
+        required: false
+        type: "string"
+      - in: "body"
+        name: "meta"
+        required: false
+        schema:
+          $ref: "#/definitions/TransactionMeta"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/TransactionMeta"
+        400:
+          description: "Bad request - check that you have provided all required parameters"
+        401:
+          description: "Unauthorised - you are not authenticated"
+        403:
+          description: "Forbidden - you do not have access to this resource"
+        404:
+          description: "Not found - the resource does not exist"
+        500:
+          description: "Server error - problem at our end"
+      x-swagger-router-controller: "Default"
+    patch:
+      description: "Update meta data for a transaction"
+      operationId: "updateTransactionMeta"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The transaction id to update the meta data for"
+        required: true
+        type: "string"
+      - name: "Ocp-Apim-Subssscription-Key"
+        in: "header"
+        description: "subscription key in header"
+        required: false
+        type: "string"
+      - in: "body"
+        name: "meta"
+        required: false
+        schema:
+          $ref: "#/definitions/TransactionMeta"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/TransactionMeta"
+        400:
+          description: "Bad request - check that you have provided all required parameters"
+        401:
+          description: "Unauthorised - you are not authenticated"
+        403:
+          description: "Forbidden - you do not have access to this resource"
+        404:
+          description: "Not found - the resource does not exist"
+        500:
+          description: "Server error - problem at our end"
+      x-swagger-router-controller: "Default"
+  /transactions/{id}/receipt:
+    get:
+      description: "Get the receipt for a transaction"
+      operationId: "getTransactionReceipt"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The id of the transaction to get the receipt for"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/TransactionReceipt"
+        400:
+          description: "Bad request - check that you have provided all required parameters"
+        401:
+          description: "Unauthorised - you are not authenticated"
+        403:
+          description: "Forbidden - you do not have access to this resource"
+        404:
+          description: "Not found - the resource does not exist"
+        500:
+          description: "Server error - problem at our end"
+      x-swagger-router-controller: "Default"
+    post:
+      description: "Add a receipt to a transaction"
+      operationId: "createTransactionReceipt"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The transaction id to add the receipt to"
+        required: true
+        type: "string"
+      - name: "Ocp-Apim-Subssscription-Key"
+        in: "header"
+        description: "subscription key in header"
+        required: false
+        type: "string"
+      - in: "body"
+        name: "receipt"
+        required: false
+        schema:
+          $ref: "#/definitions/TransactionReceipt"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/TransactionReceipt"
+        400:
+          description: "Bad request - check that you have provided all required parameters"
+        401:
+          description: "Unauthorised - you are not authenticated"
+        403:
+          description: "Forbidden - you do not have access to this resource"
+        404:
+          description: "Not found - the resource does not exist"
+        500:
+          description: "Server error - problem at our end"
+      x-swagger-router-controller: "Default"
+definitions:
+  Customer:
+    type: "object"
+    required:
+    - "address1"
+    - "address2"
+    - "county"
+    - "familyName"
+    - "givenName"
+    - "id"
+    - "postCode"
+    - "town"
+    properties:
+      id:
+        type: "string"
+        description: "System-generated Id that uniquely identifies a single Customer"
+      givenName:
+        type: "string"
+      familyName:
+        type: "string"
+      address1:
+        type: "string"
+      address2:
+        type: "string"
+      town:
+        type: "string"
+      county:
+        type: "string"
+      postCode:
+        type: "string"
+      mobilePhone:
+        type: "string"
+    example:
+      id: "1000-1000-1000-0001"
+      givenName: "John"
+      familyName: "Smith"
+      address1: "123 Springfield Ave"
+      town: "Anytown"
+      county: "Sunnyshire"
+      postCode: "AA21 XB23"
+      mobilePhone: "07799123456"
+  Account:
+    type: "object"
+    required:
+    - "id"
+    properties:
+      id:
+        type: "string"
+        description: "System-generated Id that uniquely identifies a single bank account"
+      sortCode:
+        type: "string"
+      accountNumber:
+        type: "string"
+      accountType:
+        type: "string"
+      accountFriendlyName:
+        type: "string"
+      accountBalance:
+        type: "number"
+      accountCurrency:
+        type: "string"
+    example:
+      id: "1000-1000-1000-0001"
+      sortCode: "83-99-99"
+      accountNumber: "00001234"
+      accountType: "TODO: Schema required"
+      accountFriendlyName: "College Fund"
+      accountBalanace: "123.19"
+      accountCurrency: "UKP"
+  AccountSummary:
+    type: "object"
+    required:
+    - "id"
+    properties:
+      id:
+        type: "string"
+        description: "System-generated Id that uniquely identifies a single bank account"
+      accountFriendlyName:
+        type: "string"
+      accountBalance:
+        type: "number"
+      accountCurrency:
+        type: "string"
+    example:
+      id: "1000-1000-1000-0001"
+      accountFriendlyName: "College Fund"
+      accountBalanace: "123.19"
+      accountCurrency: "UKP"
+  Transaction:
+    type: "object"
+    required:
+    - "id"
+    - "transactionAmount"
+    - "transactionDateTime"
+    - "transactionDescription"
+    properties:
+      id:
+        type: "string"
+        description: "System-generated Id that uniquely identifies a banking transaction"
+      transactionDateTime:
+        type: "string"
+        description: "RFC3339-compliant, system-generated timestamp for the transaction"
+      transactionType:
+        type: "string"
+        description: "e.g. INT (Interest), S/O (Standing Order), D/D (Direct Debit),\
+          \ POS (Point of Sale), DPC (Direct Banking by PC), C/L (Cashline i.e. ATM)"
+      transactionDescription:
+        type: "string"
+        description: "TODO: Schema needed"
+      transactionAmount:
+        type: "number"
+      transactionCurrency:
+        type: "string"
+      accountBalance:
+        type: "number"
+      transactionReceipt:
+        $ref: "#/definitions/TransactionReceipt"
+      transactionMeta:
+        $ref: "#/definitions/TransactionMeta"
+    example:
+      id: "2000-2000-2000-0001"
+      transactionDate: "2015-10-12T13:40:01Z"
+      transactioDescription: "Cash withdrawal"
+      transactionAmount: "50.00"
+      transactionCurrency: "GBP"
+  TransactionReceipt:
+    type: "object"
+    properties:
+      retailer:
+        type: "string"
+      receipt_id:
+        type: "string"
+      message:
+        type: "string"
+      amount:
+        type: "string"
+      discount:
+        type: "string"
+      receipt_items:
+        type: "array"
+        items:
+          $ref: "#/definitions/TransactionReceiptItem"
+    description: "Transaction Receipt Data"
+  TransactionReceiptItem:
+    type: "object"
+    properties:
+      item_id:
+        type: "string"
+      item_description:
+        type: "string"
+      item_price:
+        type: "string"
+      item_url:
+        type: "string"
+      item_image:
+        type: "string"
+    description: "Transaction Receipt Item"
+  TransactionMeta:
+    type: "object"
+    properties:
+      comment:
+        type: "string"
+      tags:
+        type: "array"
+        items:
+          type: "string"
+    description: "Transaction Meta Data"
+  Payment:
+    type: "object"
+    required:
+    - "paymentAmount"
+    - "paymentReference"
+    - "toAccountNumber"
+    - "toSortCode"
+    properties:
+      paymentId:
+        type: "string"
+      toAccountNumber:
+        type: "string"
+      toSortCode:
+        type: "string"
+      paymentReference:
+        type: "string"
+      paymentAmount:
+        type: "number"
+        format: "double"
+      callbackUri:
+        type: "string"
+      paymentStatus:
+        type: "string"
+      OTPCode:
+        type: "string"
+  PaymentRequest:
+    type: "object"
+    required:
+    - "paymentAmount"
+    - "paymentReference"
+    - "toAccountNumber"
+    - "toSortCode"
+    properties:
+      toAccountNumber:
+        type: "string"
+      toSortCode:
+        type: "string"
+      paymentReference:
+        type: "string"
+      paymentAmount:
+        type: "number"
+        format: "double"
+      callbackUri:
+        type: "string"
+  PatchPayment:
+    type: "object"
+    properties:
+      OTPCode:
+        type: "string"
+        description: "The OTP Code that authorises this payment"
+      paymentStatus:
+        type: "string"
+        description: "Reserved: a regular user cannot update this property"
+  CustomerArray:
+    type: "array"
+    items:
+      $ref: "#/definitions/Customer"
+  Body:
+    type: "object"
+    properties:
+      mobilePhone:
+        type: "string"
+  AccountSummaryArray:
+    type: "array"
+    items:
+      $ref: "#/definitions/AccountSummary"
+  TransactionArray:
+    type: "array"
+    items:
+      $ref: "#/definitions/Transaction"
+  PaymentArray:
+    type: "array"
+    items:
+      $ref: "#/definitions/Payment"

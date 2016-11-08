@@ -1,21 +1,19 @@
 {
   "name": "blue-bank-plus",
   "description": "Blue Bank API with expanded capability for posting receipts and transaction meta data.",
+  "main": "index.js",
   "scripts": {
-    "start": "node dist/bin/www"
+	"prestart": "npm install",
+	"start": "node index.js"
   },
+  "keywords": [
+    "swagger"
+  ],
+  "license": "Apache-2.0",
+  "private": true,
   "dependencies": {
-    "body-parser": "1.13.2",
-    "cookie-parser": "1.3.5",
-    "express": "4.13.1",
-    "node-yaml-config": "0.0.3"
-  },
-  "devDependencies": {
-    "babel": "6.1.18",
-    "babel-cli": "6.1.18",
-    "babel-preset-es2015": "6.1.18",
-    "bunyan": "1.5.1",
-    "gulp": "3.9.0",
-    "gulp-babel": "6.1.0"
+    "connect": "^3.2.0",
+    "js-yaml": "^3.3.0",
+    "swagger-tools": "0.10.1"
   }
 }
