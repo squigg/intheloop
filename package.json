@@ -1,24 +1,24 @@
 {
-  "name": "blue-bank-plus",
-  "description": "Blue Bank API with expanded capability for posting receipts and transaction meta data.",
-  "main": "index.js",
-  "scripts": {
-    "prestart": "npm install",
-    "start": "node index.js"
+  "name": "InTheLoop",
+  "private": true,
+  "version": "0.0.0",
+  "description": "InTheLoop",
+  "main": "server.js",
+  "author": {
+    "name": "squigg",
+    "email": ""
   },
-  "keywords": [
-    "swagger"
-  ],
+  "dependencies": {
+    "express": "^4.13.3",
+    "mongodb": "^2.2.11"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-zip": "^3.0.2",
+    "minimist": "^1.2.0"
+  },
   "engines": {
     "node": "5.9.1",
     "npm": "3.7.3"
-  },
-  "license": "Apache-2.0",
-  "private": true,
-  "dependencies": {
-    "connect": "^3.2.0",
-    "js-yaml": "^3.3.0",
-    "mongodb": "^2.2.11",
-    "swagger-tools": "0.10.1"
   }
 }
