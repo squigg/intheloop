@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+  <title></title>
+
+  <link href="css/ionic.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+
+  <!-- IF using Sass (run gulp sass first), then remove the CSS include above
+  <link href="css/ionic.app.css" rel="stylesheet">
+  -->
+
+  <!-- ionic/angularjs js -->
+  <script src="js/ionic.bundle.js"></script>
+
+  <!-- cordova script (this will be a 404 during development) -->
+  <script src="cordova.js"></script>
+
+  <!-- your app's js -->
+  <script src="js/app.js"></script>
+</head>
+
+<body ng-app="starter">
+<ion-pane>
+  <div class="bar bar-header bar-positive">
+    <button class="button button-icon icon ion-navicon"></button>
+    <div class="h1 title">InTheLoop</div>
+    <button class="button button-clear button-positive">Back</button>
+  </div>
+  <ion-content class="has-header" padding="true">
+    <div class="row">
+      <div class="col col-75 no-top-margin"><h2>John Lewis</h2></div>
+      <h3 class="col col-25 no-top-margin" style="text-align: right;">£28.50</h3>
+    </div>
+    <div class="row">
+      <h6 class="col col-50 no-top-margin">08/11/2016 14:35</h6>
+      <h6 class="col col-50 no-top-margin" style="text-align: right;">
+        <i class="icon ion-ios-location"></i> John Lewis, Edinburgh</h6>
+    </div>
+    <div class="row">
+      <div class="col col-25"><img src="http://placehold.it/100x100" style="width:100%"></div>
+      <div class="col col-75"><p>A little gift for Donald for Christmas</p>
+        <i class="icon ion-ios-pricetags"></i> Gifts <i class="icon ion-ios-pricetags margin-left"></i> Christmas
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col col-50 no-top-margin"><h3>Receipt</h3></div>
+      <h6 class="col col-50 no-top-margin" style="text-align: right;">ID: 34593905345<br>08/11/2016 14:34</h6>
+    </div>
+    <ion-list>
+      <ion-item class="item-thumbnail-left">
+        <img src="http://placehold.it/50x50" style="width:100%">
+        <h2>Cuddly Toy</h2>
+        <p>£28.00</p>
+        <p>Forever Friends soft plush toy</p>
+      </ion-item>
+      <ion-item class="item-thumbnail-left">
+        <img src="http://placehold.it/50x50" style="width:100%">
+        <h2>Christmas card</h2>
+        <p>£2.50</p>
+        <p>Cute Robin Christmas Card</p>
+      </ion-item>
+    </ion-list>
+    <div class="row">
+      <h4 class="col col-25 no-top-margin">Total:</h4>
+      <h4 class="col col-75 no-top-margin">£28.50</h4>
+    </div>
+    <div class="row"><p>Merry Christmas from John Lewis! Check out other gifts at
+      <a href="http://www.johnlewis.com">www.johnlewis.com</a>. All items returnable within 30 days.
+    </p></div>
+  </ion-content>
+</ion-pane>
+</body>
+</html>

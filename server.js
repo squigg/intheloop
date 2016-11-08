@@ -16,23 +16,10 @@ var upload = multer({
     })
 });
 
+app.use(express.static('public'));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-
-app.get('/', function (req, res) {
-    res.send('Hello World!');
-});
-
-app.post('/api/transactions/:id/meta', upload.single('image'), function (req, res, next) {
-
-    res.setHeader('Content-Type', 'application/json');
-    withMongo((db) => {
-        db.collection('transactionMeta').insertOne(_.merge(req.body, {transaction_id: req.params.id, image: req.file.url}), function (err, r) {
-            res.end(JSON.stringify(r || {}, null, 2));
-        });
-    });
-
-});
 
 app.get('/api/transactions/:id/meta', function (req, res) {
 
@@ -45,12 +32,58 @@ app.get('/api/transactions/:id/meta', function (req, res) {
 
 });
 
+app.post('/api/transactions/:id/meta', upload.single('image'), function (req, res) {
+
+    res.setHeader('Content-Type', 'application/json');
+    withMongo((db) => {
+        var obj = _.merge(req.body.meta, {transaction_id: req.params.id});
+        db.collection('transactionMeta').insertOne(obj, function (err, r) {
+            res.end(JSON.stringify(obj || {}, null, 2));
+        });
+    });
+
+});
+
+app.patch('/api/transactions/:id/meta', function (req, res) {
+
+    res.setHeader('Content-Type', 'application/json');
+    withMongo((db) => {
+        db.collection('transactionMeta').findOneAndUpdate({transaction_id: req.params.id}, {$set: req.body.meta}, {returnNewDocument: true}, function (err, r) {
+            res.end(JSON.stringify(r.value || {}, null, 2));
+        });
+    });
+
+});
+
+app.post('/api/transactions/:id/meta/image', upload.single('image'), function (req, res) {
+
+    res.setHeader('Content-Type', 'application/json');
+    withMongo((db) => {
+        db.collection('transactionMeta').findOneAndUpdate({transaction_id: req.params.id}, {$set: {image: req.file.url}}, {returnNewDocument: true}, function (err, r) {
+            res.end(JSON.stringify(r.value || {}, null, 2));
+        });
+    });
+
+});
+
+app.patch('/api/transactions/:id/meta/image', upload.single('image'), function (req, res) {
+
+    res.setHeader('Content-Type', 'application/json');
+    withMongo((db) => {
+        db.collection('transactionMeta').findOneAndUpdate({transaction_id: req.params.id}, {$set: {image: req.file.url}}, {returnNewDocument: true}, function (err, r) {
+            res.end(JSON.stringify(r.value || {}, null, 2));
+        });
+    });
+
+});
+
 app.post('/api/transactions/:id/receipt', function (req, res) {
 
     res.setHeader('Content-Type', 'application/json');
     withMongo((db) => {
-        db.collection('transactionReceipt').insertOne(_.merge(req.body.receipt, {transaction_id: req.params.id}), function (err, r) {
-            res.end(JSON.stringify(r || {}, null, 2));
+        var obj = _.merge(req.body.receipt, {transaction_id: req.params.id});
+        db.collection('transactionReceipt').insertOne(obj, function (err, r) {
+            res.end(JSON.stringify(obj || {}, null, 2));
         });
     });
 
