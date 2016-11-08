@@ -9,8 +9,12 @@
     "email": ""
   },
   "dependencies": {
+    "body-parser": "^1.15.2",
     "express": "^4.13.3",
-    "mongodb": "^2.2.11"
+    "lodash": "^4.16.6",
+    "mongodb": "^2.2.11",
+    "multer": "^1.2.0",
+    "multer-azure-storage": "^0.1.1"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
