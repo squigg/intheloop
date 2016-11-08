@@ -26,9 +26,6 @@ app.get('/', function (req, res) {
 app.post('/api/transactions/:id/meta', upload.single('image'), function (req, res, next) {
 
     res.setHeader('Content-Type', 'application/json');
-    console.log(req.params);
-    console.log(req.body);
-    console.log(req.file);
     withMongo((db) => {
         db.collection('transactionMeta').insertOne(_.merge(req.body, {transaction_id: req.params.id, image: req.file.url}), function (err, r) {
             res.end(JSON.stringify(r || {}, null, 2));
