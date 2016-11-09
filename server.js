@@ -17,7 +17,6 @@ var upload = multer({
 });
 
 app.use(express.static('public'));
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -48,8 +47,19 @@ app.patch('/api/transactions/:id/meta', function (req, res) {
 
     res.setHeader('Content-Type', 'application/json');
     withMongo((db) => {
-        db.collection('transactionMeta').findOneAndUpdate({transaction_id: req.params.id}, {$set: req.body.meta}, {returnNewDocument: true}, function (err, r) {
+        db.collection('transactionMeta').findOneAndUpdate({transaction_id: req.params.id}, {$set: req.body.meta}, {returnNewDocument: true, upsert: true}, function (err, r) {
             res.end(JSON.stringify(r.value || {}, null, 2));
+        });
+    });
+
+});
+
+app.delete('/api/transactions/:id/meta', function (req, res) {
+
+    withMongo((db) => {
+
+        db.collection('transactionMeta').removeOne({transaction_id: req.params.id}, function (err, r) {
+            res.end();
         });
     });
 
@@ -59,7 +69,7 @@ app.post('/api/transactions/:id/meta/image', upload.single('image'), function (r
 
     res.setHeader('Content-Type', 'application/json');
     withMongo((db) => {
-        db.collection('transactionMeta').findOneAndUpdate({transaction_id: req.params.id}, {$set: {image: req.file.url}}, {returnNewDocument: true}, function (err, r) {
+        db.collection('transactionMeta').findOneAndUpdate({transaction_id: req.params.id}, {$set: {image: req.file.url}}, {returnNewDocument: true, upsert: true}, function (err, r) {
             res.end(JSON.stringify(r.value || {}, null, 2));
         });
     });
@@ -70,7 +80,7 @@ app.patch('/api/transactions/:id/meta/image', upload.single('image'), function (
 
     res.setHeader('Content-Type', 'application/json');
     withMongo((db) => {
-        db.collection('transactionMeta').findOneAndUpdate({transaction_id: req.params.id}, {$set: {image: req.file.url}}, {returnNewDocument: true}, function (err, r) {
+        db.collection('transactionMeta').findOneAndUpdate({transaction_id: req.params.id}, {$set: {image: req.file.url}}, {returnNewDocument: true, upsert: true}, function (err, r) {
             res.end(JSON.stringify(r.value || {}, null, 2));
         });
     });
@@ -95,6 +105,16 @@ app.get('/api/transactions/:id/receipt', function (req, res) {
     withMongo((db) => {
         db.collection('transactionReceipt').find({'transaction_id': req.params.id}).toArray(function (err, data) {
             res.end(JSON.stringify(data || {}, null, 2));
+        });
+    });
+
+});
+
+app.delete('/api/transactions/:id/receipt', function (req, res) {
+
+    withMongo((db) => {
+        db.collection('transactionReceipt').removeOne({transaction_id: req.params.id}, function (err, r) {
+            res.end();
         });
     });
 
