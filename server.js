@@ -47,7 +47,7 @@ app.patch('/api/transactions/:id/meta', function (req, res) {
 
     res.setHeader('Content-Type', 'application/json');
     withMongo((db) => {
-        db.collection('transactionMeta').findOneAndUpdate({transaction_id: req.params.id}, {$set: req.body.meta}, {returnNewDocument: true, upsert: true}, function (err, r) {
+        db.collection('transactionMeta').findOneAndUpdate({transaction_id: req.params.id}, {$set: req.body.meta}, {returnOriginal: false, upsert: true}, function (err, r) {
             res.end(JSON.stringify(r.value || {}, null, 2));
         });
     });
@@ -69,7 +69,7 @@ app.post('/api/transactions/:id/meta/image', upload.single('image'), function (r
 
     res.setHeader('Content-Type', 'application/json');
     withMongo((db) => {
-        db.collection('transactionMeta').findOneAndUpdate({transaction_id: req.params.id}, {$set: {image: req.file.url}}, {returnNewDocument: true, upsert: true}, function (err, r) {
+        db.collection('transactionMeta').findOneAndUpdate({transaction_id: req.params.id}, {$set: {image: req.file.url}}, {returnOriginal: false, upsert: true}, function (err, r) {
             res.end(JSON.stringify(r.value || {}, null, 2));
         });
     });
@@ -80,7 +80,7 @@ app.patch('/api/transactions/:id/meta/image', upload.single('image'), function (
 
     res.setHeader('Content-Type', 'application/json');
     withMongo((db) => {
-        db.collection('transactionMeta').findOneAndUpdate({transaction_id: req.params.id}, {$set: {image: req.file.url}}, {returnNewDocument: true, upsert: true}, function (err, r) {
+        db.collection('transactionMeta').findOneAndUpdate({transaction_id: req.params.id}, {$set: {image: req.file.url}}, {returnOriginal: false, upsert: true}, function (err, r) {
             res.end(JSON.stringify(r.value || {}, null, 2));
         });
     });
